@@ -323,7 +323,7 @@ let
       options = {
         username = lib.mkOption {
           type = with lib.types; passwdEntry str;
-          default = name;
+          default = config.users.users.${name}.name;
           description = ''
             Specify the user for which the {option}`directories` and {option}`files`
             should be persisted. Defaults to the name of the parent attribute set.
@@ -331,7 +331,7 @@ let
         };
         home = lib.mkOption {
           type = with lib.types; passwdEntry path;
-          default = config.users.users.${attrs.config.username}.home;
+          default = config.users.users.${name}.home;
           defaultText = "config.users.users.\${name}.home";
           description = ''
             Specify the path to the user's home directory.
@@ -343,7 +343,7 @@ let
             listOf (
               coercedTo str (d: { directory = d; }) (submodule [
                 {
-                  _module.args.defaultOwner = attrs.config.username;
+                  _module.args.defaultOwner = name;
                   mountOptions = attrs.config.commonMountOptions;
                 }
                 directoryPath
@@ -356,8 +356,8 @@ let
               intermediateDirectorySettings = {
                 how = "_intermediate";
                 configureParent = false;
-                user = attrs.config.username;
-                group = config.users.users.${attrs.config.username}.group;
+                user = name;
+                group = config.users.users.${name}.group;
                 mode = "0755";
               };
               allDirectories =
@@ -377,7 +377,7 @@ let
             listOf (
               coercedTo str (f: { file = f; }) (submodule [
                 {
-                  _module.args.defaultOwner = attrs.config.username;
+                  _module.args.defaultOwner = name;
                   mountOptions = attrs.config.commonMountOptions;
                 }
                 filePath
@@ -418,13 +418,13 @@ let
         };
         homeMode = lib.mkOption {
           type = lib.types.str;
-          default = config.users.users.${attrs.config.username}.homeMode;
+          default = config.users.users.${name}.homeMode;
           internal = true;
           readOnly = true;
         };
         homeGroup = lib.mkOption {
           type = lib.types.str;
-          default = config.users.users.${attrs.config.username}.group;
+          default = config.users.users.${name}.group;
           internal = true;
           readOnly = true;
         };
